@@ -73,7 +73,7 @@ export const babel = () => {
         'UNMANGLED_CLASS_NAMES=1',
         'DISABLE_SPEEDY_STYLESHEET=1'
       ])
-      .filter(Boolean)
+      .filter(Boolean) // filters out false, 0, -0, 0n, "", null, undefined, NaN
     babelArgs.push('--watch')
   } else {
     envVars = envVars
@@ -107,13 +107,13 @@ export const babel = () => {
     es: getCommand(
       'babel',
       [...babelArgs, '--out-dir', 'es'],
-      [...envVars, 'ES_MODULES=1']
+      [...(envVars as string[]), 'ES_MODULES=1']
     ),
     cjs: [
       getCommand(
         'babel',
         [...babelArgs, '--out-dir', 'lib'],
-        [...envVars, 'TRANSFORM_IMPORTS=1']
+        [...(envVars as string[]), 'TRANSFORM_IMPORTS=1']
       ),
       getCommand(specifyCJSFormat, [], [])
     ]

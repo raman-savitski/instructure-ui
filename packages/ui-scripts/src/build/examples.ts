@@ -90,7 +90,7 @@ export const examples = () => {
 
   process.exit(
     runCommandsConcurrently({
-      storybook: getCommand(command, commandArgs, envVars)
+      storybook: getCommand(command, commandArgs, envVars as string[])
     }).status
   )
 }

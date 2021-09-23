@@ -41,8 +41,25 @@ function error(...args: string[]) {
   console.error(chalk.red('⚠️   ', ...args))
 }
 
+const isWindows =
+  process.platform === 'win32' ||
+  process.env.OSTYPE === 'cygwin' ||
+  process.env.OSTYPE === 'msys'
+
+function fixExecutableOnWindows(executable: string) {
+  if (isWindows) {
+    // Windows ignores the shebang line #!/usr/bin/env node and will execute it
+    // according to the .js file association.
+    // Also sometimes (e.g. Karma) .js files have no extension :/
+    if (executable.endsWith('.js')) {
+      return 'node ' + executable
+    }
+  }
+  return executable
+}
+
 class Command {
-  constructor(bin: any, args: any[] = [], vars: any[] = []) {
+  constructor(bin: string, args: string[] = [], vars: string[] = []) {
     Object.defineProperties(this, {
       vars: {
         value: vars
@@ -56,24 +73,34 @@ class Command {
     })
   }
   toString() {
-    return `${this.vars.length > 0 ? `${this.vars.join(' ')} ` : ''}${this.bin}`
+    if (this.vars.length == 0) {
+      return this.bin
+    }
+    if (isWindows) {
+      let envVars = ''
+      for (const envVar of this.vars) {
+        envVars = envVars + 'SET ' + envVar + ' & '
+      }
+      return envVars + this.bin
+    }
+    return `${this.vars.join(' ')} ${this.bin}`
   }
-  get bin(): any {
+  get bin(): string {
     return this.bin
   }
-  get args(): any {
+  get args(): string[] {
     return this.args
   }
-  get vars(): any {
+  get vars(): string[] {
     return this.vars
   }
 }
 
-function getCommand(bin: any, args: any[] = [], vars: any[] = []) {
+function getCommand(bin: string, args: string[] = [], vars: string[] = []) {
   return new Command(bin, args, vars)
 }
 
-function runCommandsConcurrently(commands: Record<string, any>) {
+function runCommandsConcurrently(commands: Record<string, Command>) {
   const args = [
     '--kill-others-on-fail',
     '--prefix',
@@ -87,11 +114,11 @@ function runCommandsConcurrently(commands: Record<string, any>) {
   ]
 
   Object.keys(commands).forEach((name) => {
-    let commandList = commands[name]
+    let commandList: any = commands[name]
 
     if (commandList) {
       commandList = Array.isArray(commandList) ? commandList : [commandList]
-      commandList.forEach((command: any) => {
+      commandList.forEach((command: Command) => {
         args.push(
           `${command.toString()}${
             command.args.length > 0 ? ` ${command.args.join(' ')} ` : ''
@@ -102,20 +129,18 @@ function runCommandsConcurrently(commands: Record<string, any>) {
   })
 
   let result = { status: 1 }
-
   try {
-    result = runCommandSync(`${resolveBin('concurrently')}`, args)
+    result = runCommandSync('concurrently', args)
   } catch (err) {
     error(err)
   }
-
   return result
 }
 
 function runCommandSync(
-  bin: any,
-  args: any[] = [],
-  vars: any[] = [],
+  bin: string,
+  args: string[] = [],
+  vars: string[] = [],
   opts: any = {}
 ) {
   const command = getCommand(bin, args, vars)
@@ -123,14 +148,13 @@ function runCommandSync(
     stdio: 'inherit',
     ...opts
   })
-
   return { ...result, status: result.exitCode }
 }
 
 async function runCommandAsync(
-  bin: any,
-  args: any[] = [],
-  vars: any[] = [],
+  bin: string,
+  args: string[] = [],
+  vars: string[] = [],
   opts: any = {}
 ) {
   const command = getCommand(bin, args, vars)
@@ -142,12 +166,18 @@ async function runCommandAsync(
 }
 
 function resolveBin(
-  modName: any,
+  modName: string,
   { executable = modName, cwd = process.cwd() } = {}
 ) {
   let pathFromWhich
   try {
-    pathFromWhich = fs.realpathSync(which.sync(executable))
+    let opts
+    if (isWindows) {
+      // actually it is only needed for .js files. If this would not be here
+      // it would add /package.json to the end
+      opts = { pathExt: '.EXE;.CMD;.BAT;.COM;.exe;.cmd;.bat;.com;.js' }
+    }
+    pathFromWhich = fs.realpathSync(which.sync(executable, opts))
   } catch (_error) {
     // ignore _error
   }
@@ -158,12 +188,12 @@ function resolveBin(
     const binPath = typeof bin === 'string' ? bin : bin[executable]
     const fullPathToBin = path.join(modPkgDir, binPath)
     if (fullPathToBin === pathFromWhich) {
-      return executable
+      return fixExecutableOnWindows(executable)
     }
-    return fullPathToBin.replace(cwd, '.')
+    return fixExecutableOnWindows(fullPathToBin.replace(cwd, '.'))
   } catch (error) {
     if (pathFromWhich) {
-      return executable
+      return fixExecutableOnWindows(executable)
     }
     throw error
   }

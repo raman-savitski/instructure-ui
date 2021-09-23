@@ -135,11 +135,13 @@ const themes = parseThemes(options.themes)
 const icons = parseIcons(options.icons)
 
 const files = options.files.map((file) =>
-  path.resolve(options.projectRoot, file)
+  // on Windows paths are separated by "\", and this cannot be used in globby
+  // see https://github.com/mrmlnc/fast-glob#pattern-syntax
+  path.resolve(options.projectRoot, file).replace(/\\/g, '/')
 )
 
 const ignore = options.ignore.map((file) =>
-  path.resolve(options.projectRoot, file)
+  path.resolve(options.projectRoot, file).replace(/\\/g, '/')
 )
 
 globby(files, { ignore })
@@ -172,7 +174,9 @@ globby(files, { ignore })
     }
   })
   .catch((error) => {
-    throw Error('Error when generating documentation data: ' + error)
+    console.error('Error when generating documentation data')
+    console.error(error)
+    process.exitCode = 1
   })
 
 function parseThemes(themes = []) {

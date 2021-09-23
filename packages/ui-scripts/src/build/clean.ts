@@ -22,21 +22,23 @@
  * SOFTWARE.
  */
 
-import { runCommandsConcurrently, getCommand } from '@instructure/command-utils'
+import fs from 'fs'
 
 export const clean = () => {
-  process.exit(
-    runCommandsConcurrently({
-      clean: getCommand('rimraf', [
-        '__build__',
-        'es',
-        'dist',
-        'lib',
-        'tokens',
-        '.babel-cache',
-        '.cache',
-        'types'
-      ])
-    }).status
-  )
+  for (const dir of [
+    'es',
+    'dist',
+    'lib',
+    'tokens',
+    '.babel-cache',
+    '.cache',
+    'types'
+  ]) {
+    const dirToRemove = process.cwd() + '/' + dir
+    if (fs.existsSync(dirToRemove)) {
+      // recursive option was deprecated in Node 16, but its alternative,
+      // was added in Node 14.14 and we support Node 12+
+      fs.rmdirSync(dirToRemove, { recursive: true })
+    }
+  }
 }

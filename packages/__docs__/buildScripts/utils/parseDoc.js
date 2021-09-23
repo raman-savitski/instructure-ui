@@ -26,7 +26,12 @@ const path = require('path')
 const getJSDoc = require('./getJSDoc')
 const getCodeDoc = require('./getCodeDoc')
 const getReactDoc = require('./getReactDoc')
-const getFrontMatter = require('./getFrontMatter')
+const grayMatter = require('gray-matter')
+
+const isWindows =
+  process.platform === 'win32' ||
+  process.env.OSTYPE === 'cygwin' ||
+  process.env.OSTYPE === 'msys'
 
 module.exports = function (resourcePath, source, errorHandler) {
   const extension = path.extname(resourcePath)
@@ -47,9 +52,21 @@ module.exports = function (resourcePath, source, errorHandler) {
   // the YAML description in a JSDoc comment at the top of some files
   let frontMatter
   try {
-    frontMatter = getFrontMatter(doc.description)
+    if (isWindows && doc.description && typeof doc.description === 'string') {
+      // jsDoc bug: The parsed description have \r as delimiters resulting in
+      // "engine not registered" errors in grey-matter
+      doc.description = doc.description.replace(/\r/g, '\r\n')
+    }
+    const matter = grayMatter(doc.description || '')
+    frontMatter = {
+      ...matter.data,
+      order: matter.data.order || '',
+      description: matter.content
+    }
   } catch (e) {
-    throw `Failed to parse YAML "${doc.description}" \nexception is \n${e}`
+    throw new Error(
+      `Failed to parse YAML from ${resourcePath}:"${doc.description}"\nexception is \n${e}`
+    )
   }
 
   return {

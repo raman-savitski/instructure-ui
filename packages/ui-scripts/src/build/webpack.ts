@@ -79,7 +79,7 @@ export const webpack = () => {
 
   process.exit(
     runCommandsConcurrently({
-      webpack: getCommand(command, webpackArgs, envVars)
+      webpack: getCommand(command, webpackArgs, envVars as string[])
     }).status
   )
 }

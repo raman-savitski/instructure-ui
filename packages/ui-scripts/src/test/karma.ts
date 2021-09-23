@@ -129,7 +129,7 @@ export const karma = () => {
 
   process.exit(
     runCommandsConcurrently({
-      karma: getCommand('karma', karmaArgs, envVars)
+      karma: getCommand('karma', karmaArgs, envVars as string[])
     }).status
   )
 }
