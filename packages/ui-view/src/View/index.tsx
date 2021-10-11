@@ -214,9 +214,7 @@ class View extends Component<ViewProps> {
         //@ts-expect-error TODO: `ref` prop causes: "Expression produces a union type that is too complex to represent.ts(2590)"
         {...passthroughProps(props)}
         className={className}
-        css={styles?.view}
-        //@ts-expect-error TODO: null not assignable
-        style={styles?.inlineStyles}
+        css={[styles?.view, styles?.inlineStyles]}
         ref={this.handleElementRef}
       >
         {children}
