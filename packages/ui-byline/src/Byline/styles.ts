@@ -23,7 +23,7 @@
  */
 
 import type { BylineTheme } from '@instructure/shared-types'
-import type { BylineProps, BylineStyle } from './props'
+import type { BylineOwnProps } from './props'
 
 /**
  * ---
@@ -36,8 +36,8 @@ import type { BylineProps, BylineStyle } from './props'
  */
 const generateStyle = (
   componentTheme: BylineTheme,
-  props: BylineProps
-): BylineStyle => {
+  props: BylineOwnProps // this might be better as BylineOwnProps & OtherHTMLAttributes<BylineOwnProps>
+) => {
   const { alignContent, size } = props
 
   const alignContentVariants = {
@@ -92,7 +92,7 @@ const generateStyle = (
       fontSize: componentTheme.titleFontSize,
       fontWeight: componentTheme.titleFontWeight,
       lineHeight: componentTheme.titleLineHeight
-    },
+    } as const,
     description: {
       label: 'byline__description',
       fontSize: componentTheme.descriptionFontSize,

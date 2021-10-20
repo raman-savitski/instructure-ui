@@ -27,16 +27,13 @@ import PropTypes from 'prop-types'
 
 import { ThemeablePropTypes } from '@instructure/emotion'
 
-import type {
-  Spacing,
-  WithStyleProps,
-  ComponentStyle
-} from '@instructure/emotion'
+import type { Spacing, WithStyleProps } from '@instructure/emotion'
 import type {
   PropValidators,
   BylineTheme,
   OtherHTMLAttributes
 } from '@instructure/shared-types'
+import generateStyle from './styles'
 
 type BylineOwnProps = {
   /**
@@ -76,12 +73,8 @@ type PropKeys = keyof BylineOwnProps
 type AllowedPropKeys = Readonly<Array<PropKeys>>
 
 type BylineProps = BylineOwnProps &
-  WithStyleProps<BylineTheme, BylineStyle> &
+  WithStyleProps<BylineTheme, ReturnType<typeof generateStyle>> &
   OtherHTMLAttributes<BylineOwnProps>
-
-type BylineStyle = ComponentStyle<
-  'byline' | 'figure' | 'caption' | 'title' | 'description' | 'maxWidth'
->
 
 const propTypes: PropValidators<PropKeys> = {
   children: PropTypes.node.isRequired,
@@ -103,5 +96,5 @@ const allowedProps: AllowedPropKeys = [
   'title'
 ]
 
-export type { BylineProps, BylineStyle }
+export type { BylineProps, BylineOwnProps }
 export { propTypes, allowedProps }
