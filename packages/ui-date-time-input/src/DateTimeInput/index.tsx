@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-import React, { Component, SyntheticEvent } from 'react'
+import React, { Component, SyntheticEvent, MouseEvent } from 'react'
 import { Locale, DateTime, ApplyLocaleContext } from '@instructure/ui-i18n'
 import type { Moment } from '@instructure/ui-i18n'
 import { FormFieldGroup } from '@instructure/ui-form-field'
@@ -213,7 +213,7 @@ class DateTimeInput extends Component<DateTimeInputProps, DateTimeInputState> {
   }
 
   // date is returned es a ISO string, like 2021-09-14T22:00:00.000Z
-  handleDayClick = (event: SyntheticEvent, { date }: { date: string }) => {
+  handleDayClick = (event: MouseEvent<any>, { date }: { date: string }) => {
     const dateParsed = DateTime.parse(date, this.locale(), this.timezone())
     this.updateStateBasedOnDateInput(dateParsed, event)
   }
