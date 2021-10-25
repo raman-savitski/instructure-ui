@@ -103,6 +103,7 @@
     "@instructure/ui-truncate-text": "8.11.1",
     "@instructure/ui-utils": "8.11.1",
     "@instructure/ui-view": "8.11.1",
+    "@instructure/shared-types": "8.11.1",
     "lorem-ipsum": "^1.0.6",
     "marked": "^2.0.3",
     "moment": "^2.23.0",
