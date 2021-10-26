@@ -147,8 +147,8 @@ type DateTimeInputProps = {
    **/
   messageFormat?: string
   /**
-   * The layout of this component
-   * Vertically stacked, horizontally arranged in 2 columns, or inline.
+   * The layout of this component.
+   * Vertically stacked, horizontally arranged in 2 columns, or inline (default).
    * See [FormFieldGroup](#FormFieldGroup) for details.
    **/
   layout?: 'stacked' | 'columns' | 'inline'

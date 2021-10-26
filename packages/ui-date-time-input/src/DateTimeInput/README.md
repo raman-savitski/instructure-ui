@@ -5,7 +5,7 @@ describes: DateTimeInput
 A DateTimeInput component is used to enter a date-time value. It is built as a composition
 of the [DateInput](#DateInput) and [TimeSelect](#TimeSelect) components.
 
-A DateTimeInput with `column` layout and a default value:
+A DateTimeInput with `columns` layout and a default value:
 
 ```js
 ---
@@ -19,12 +19,13 @@ class Example extends React.Component {
         <DateTimeInput
           description="Pick a date and time"
           datePlaceholder="Choose a date"
-          dateLabel="Date"
+          dateRenderLabel="Date"
+          timeRenderLabel="Time"
           invalidDateTimeMessage="Invalid date!"
-          timeLabel="Time"
           prevMonthLabel='Previous month'
           nextMonthLabel='Next month'
           defaultValue="2018-01-18T13:30"
+          layout="columns"
         />
     </div>)
   }
@@ -68,8 +69,8 @@ class Example extends React.Component {
           <DateTimeInput
             description={<ScreenReaderContent>Pick a date and time</ScreenReaderContent>}
             datePlaceholder="Choose"
-            dateLabel="Date"
-            timeLabel="Time"
+            dateRenderLabel="Date"
+            timeRenderLabel="Time"
             prevMonthLabel='Previous month'
             nextMonthLabel='Next month'
             onChange={this.onChange}
@@ -97,8 +98,8 @@ render: true
 <DateTimeInput
   description="Pick a date and time"
   datePlaceholder="Choose a date"
-  dateLabel="Date"
-  timeLabel="Time"
+  dateRenderLabel="Date"
+  timeRenderLabel="Time"
   prevMonthLabel='Previous month'
   nextMonthLabel='Next month'
   invalidDateTimeMessage={(dvalue) => { return `'${dvalue} is not valid.` }}
@@ -123,8 +124,8 @@ class Example extends React.Component {
         <DateTimeInput
           description="Pick a date and time"
           datePlaceholder="Choose a date"
-          dateLabel="Date"
-          timeLabel="Time"
+          dateRenderLabel="Date"
+          timeRenderLabel="Time"
           prevMonthLabel='Previous month'
           nextMonthLabel='Next month'
           invalidDateTimeMessage={(dvalue) => {
