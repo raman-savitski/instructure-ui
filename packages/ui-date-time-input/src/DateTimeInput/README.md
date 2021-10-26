@@ -24,7 +24,6 @@ class Example extends React.Component {
           timeLabel="Time"
           prevMonthLabel='Previous month'
           nextMonthLabel='Next month'
-          layout="columns"
           defaultValue="2018-01-18T13:30"
         />
     </div>)

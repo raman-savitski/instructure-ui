@@ -62,7 +62,10 @@ class DateTimeInput extends Component<DateTimeInputProps, DateTimeInputState> {
     dateFormat: 'LL' // Localized date with full month, e.g. "August 6, 2014"
   } as const
 
+  context!: React.ContextType<typeof ApplyLocaleContext>
+
   static contextType = ApplyLocaleContext
+  //declare asdasd: string
 
   private _timeInput?: TimeSelect
   ref: Element | null = null // This is used by Tooltip for positioning
@@ -478,9 +481,9 @@ class DateTimeInput extends Component<DateTimeInputProps, DateTimeInputState> {
     const {
       description,
       datePlaceholder,
-      dateLabel,
+      dateRenderLabel,
       dateInputRef,
-      timeLabel,
+      timeRenderLabel,
       timeFormat,
       timeStep,
       timeInputRef,
@@ -511,7 +514,7 @@ class DateTimeInput extends Component<DateTimeInputProps, DateTimeInputState> {
           onBlur={this.handleBlur}
           inputRef={dateInputRef}
           placeholder={datePlaceholder}
-          renderLabel={dateLabel}
+          renderLabel={dateRenderLabel}
           renderWeekdayLabels={
             renderWeekdayLabels ? renderWeekdayLabels : this.defaultWeekdays
           }
@@ -542,7 +545,7 @@ class DateTimeInput extends Component<DateTimeInputProps, DateTimeInputState> {
           onChange={this.handleTimeChange}
           onBlur={this.handleBlur}
           ref={this.timeInputComponentRef}
-          renderLabel={timeLabel}
+          renderLabel={timeRenderLabel}
           locale={locale}
           format={timeFormat}
           step={timeStep}
