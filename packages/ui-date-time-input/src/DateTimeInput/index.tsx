@@ -65,7 +65,6 @@ class DateTimeInput extends Component<DateTimeInputProps, DateTimeInputState> {
   context!: React.ContextType<typeof ApplyLocaleContext>
 
   static contextType = ApplyLocaleContext
-  //declare asdasd: string
 
   private _timeInput?: TimeSelect
   ref: Element | null = null // This is used by Tooltip for positioning
@@ -234,7 +233,10 @@ class DateTimeInput extends Component<DateTimeInputProps, DateTimeInputState> {
       this.setState({
         dateInputText: this.state.iso
           ? this.state.iso.format(this.dateFormat)
-          : ''
+          : '',
+        calendarSelectedDate: this.state.iso
+          ? this.state.iso.clone()
+          : undefined
       })
     }
     this.setState({ isShowingCalendar: false, dateInputTextChanged: false })
